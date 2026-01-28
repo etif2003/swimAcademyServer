@@ -5,7 +5,7 @@ import {
   addCourseController,
   deleteCourseController,
   updateCourseController,
-  resetCourseController,
+  resetCoursesController,
 } from "../controllers/Course.js";
 
 const router = express.Router();
@@ -15,6 +15,6 @@ router.get("/id/:id", getCourseByIdController);
 router.post("/", addCourseController);
 router.delete("/id/:id", deleteCourseController);
 router.put("/id/:id", updateCourseController);
-router.put("/reset", resetCourseController);
+router.put("/reset", resetCoursesController);
 
 export default router;
