@@ -5,6 +5,8 @@ import "dotenv/config";
 import jwt from "jsonwebtoken";
 
 import courseRoutes from "./routes/Course.js";
+import userRoutes from "./routes/user.js";
+
 
 
 const port = process.env.PORT || 4000;
@@ -16,6 +18,8 @@ app.use(cors());
 
 // ROUTES
 app.use("/api/courses", courseRoutes);
+app.use("/api/users", userRoutes);
+
 
 // -------------------- START SERVER -------------------- //
 const startServer = async () => {
