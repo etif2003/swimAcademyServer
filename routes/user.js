@@ -5,28 +5,30 @@ import {
   changePasswordController,
   getAllUsersController,
   getUserByIdController,
-  updateUserController,
   deleteUserController,
   updateUserRoleController,
+  updateMyUserController,
+  getMeController,
 } from "../controllers/user.js";
 
+
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+// import { roleMiddleware } from "../middlewares/role.middleware.js";
 const router = express.Router();
 
-
 router.post("/register", registerController);
-
 router.post("/login", loginController);
 
-router.put("/change-password", changePasswordController);
+// משתמש מחובר
+router.get("/me", authMiddleware, getMeController);
+router.put("/me", authMiddleware, updateMyUserController);
+router.put("/change-password", authMiddleware, changePasswordController);
 
-router.put("/", updateUserController);
+// admin
+router.get("/", authMiddleware,  getAllUsersController);
+router.get("/:id", authMiddleware,  getUserByIdController);
+router.delete("/:id", authMiddleware,  deleteUserController);
+router.put("/:id/role", authMiddleware,  updateUserRoleController);
 
-router.get("/", getAllUsersController);
-
-router.get("/:id", getUserByIdController);
-
-router.delete("/:id", deleteUserController);
-
-router.put("/:id/role", updateUserRoleController);
 
 export default router;

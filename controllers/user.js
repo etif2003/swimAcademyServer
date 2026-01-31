@@ -1,6 +1,3 @@
-
-//הערה חשובה: כרגע בפונקציות של איפוס סיסמא ועידכון משתמש השתמשתי בID שהגיע מגוף הבקשה בעתיד צריך לשנות שזה יגיע מJWT
-
 import {
   registerUserService,
   loginUserService,
@@ -14,7 +11,11 @@ import {
 
 import { serverResponse } from "../utils/server-response.js";
 
-//REGISTER
+/* =====================
+   PUBLIC
+===================== */
+
+// REGISTER
 export const registerController = async (req, res) => {
   try {
     const user = await registerUserService(req.body);
@@ -24,7 +25,7 @@ export const registerController = async (req, res) => {
   }
 };
 
-//LOGIN
+// LOGIN
 export const loginController = async (req, res) => {
   try {
     const data = await loginUserService(req.body);
@@ -34,12 +35,15 @@ export const loginController = async (req, res) => {
   }
 };
 
+/* =====================
+   AUTH REQUIRED
+===================== */
 
-//CHANGE PASSWORD
+// CHANGE PASSWORD (מחובר)
 export const changePasswordController = async (req, res) => {
   try {
     const result = await changePasswordService({
-      userId: req.body.userId,
+      userId: req.user._id, //  JWT
       currentPassword: req.body.currentPassword,
       newPassword: req.body.newPassword,
     });
@@ -50,7 +54,29 @@ export const changePasswordController = async (req, res) => {
   }
 };
 
-//GET ALL USERS (ADMIN)
+// UPDATE MY USER
+export const updateMyUserController = async (req, res) => {
+  try {
+    const updatedUser = await updateUserService(
+      req.user._id, //  JWT
+      req.body
+    );
+    serverResponse(res, 200, updatedUser);
+  } catch (err) {
+    serverResponse(res, 400, { message: err.message });
+  }
+};
+
+// GET ME
+export const getMeController = async (req, res) => {
+  serverResponse(res, 200, req.user);
+};
+
+/* =====================
+   ADMIN ONLY
+===================== */
+
+// GET ALL USERS
 export const getAllUsersController = async (req, res) => {
   try {
     const users = await getAllUsersService();
@@ -60,7 +86,7 @@ export const getAllUsersController = async (req, res) => {
   }
 };
 
-//GET USER BY ID (ADMIN)
+// GET USER BY ID
 export const getUserByIdController = async (req, res) => {
   try {
     const user = await getUserByIdService(req.params.id);
@@ -70,21 +96,7 @@ export const getUserByIdController = async (req, res) => {
   }
 };
 
-//UPDATE USER
-export const updateUserController = async (req, res) => {
-  try {
-    const { userId, ...data } = req.body;
-    const updatedUser = await updateUserService(
-      userId,
-      data
-    );
-    serverResponse(res, 200, updatedUser);
-  } catch (err) {
-    serverResponse(res, 400, { message: err.message });
-  }
-};
-
-//DELETE USER
+// DELETE USER
 export const deleteUserController = async (req, res) => {
   try {
     const result = await deleteUserService(req.params.id);
@@ -94,7 +106,7 @@ export const deleteUserController = async (req, res) => {
   }
 };
 
-// UPDATE USER ROLE (ADMIN)
+// UPDATE USER ROLE
 export const updateUserRoleController = async (req, res) => {
   try {
     const user = await updateUserRoleService(
