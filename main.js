@@ -8,7 +8,7 @@ import courseRoutes from "./routes/Course.js";
 import userRoutes from "./routes/user.js";
 import instructorRoutes from "./routes/instructor.js";
 import schoolRoutes from "./routes/school.js";
-
+import registrationRoutes from "./routes/registration.js";
 
 
 const port = process.env.PORT || 4000;
@@ -23,6 +23,8 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/instructors", instructorRoutes);
 app.use("/api/schools", schoolRoutes);
+app.use("/api/registrations", registrationRoutes);
+
 
 
 // -------------------- START SERVER -------------------- //

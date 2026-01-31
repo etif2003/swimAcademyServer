@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { Course } from "../models/Course.js";
 import { Instructor } from "../models/Instructor.js";
 import { School } from "../models/School.js";
+import { Registration } from "../models/Registration.js";
+
 
 /* ===== helpers ===== */
 
@@ -182,6 +184,11 @@ export const updateCourseService = async (courseId, data) => {
 /* =====================
    DELETE COURSE
 ===================== */
+
+
+
+
+
 export const deleteCourseService = async (courseId) => {
   if (!isValidObjectId(courseId)) {
     throw new Error("מזהה קורס לא תקין");
@@ -191,6 +198,14 @@ export const deleteCourseService = async (courseId) => {
   if (!course) {
     throw new Error("קורס לא נמצא");
   }
+  const registrationsCount = await Registration.countDocuments({
+    course: courseId,
+  });
+
+  if (registrationsCount > 0) {
+    throw new Error("לא ניתן למחוק קורס שיש אליו נרשמים");
+  }
+
 
   await course.deleteOne();
 
