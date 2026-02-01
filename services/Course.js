@@ -4,14 +4,13 @@ import { Instructor } from "../models/Instructor.js";
 import { School } from "../models/School.js";
 import { Registration } from "../models/Registration.js";
 
-
 /* ===== helpers ===== */
 
 const isValidObjectId = (id) =>
   mongoose.Types.ObjectId.isValid(id);
 
-const allowedCategories = ["ילדים", "מבוגרים"];
 const allowedCreators = ["Instructor", "School"];
+const allowedCategories = ["לימוד", "הכשרה", "טיפולי"];
 
 /* =====================
    CREATE COURSE
@@ -23,6 +22,8 @@ export const createCourseService = async ({
   description,
   price,
   category,
+  targetAudience,
+  level,
   image,
 }) => {
   if (!creatorId || !creatorType) {
@@ -37,7 +38,7 @@ export const createCourseService = async ({
     throw new Error("סוג יוצר לא חוקי");
   }
 
-  if (!title || !description || price === undefined || !category) {
+  if (!title || !description || price === undefined || !category || !targetAudience) {
     throw new Error("חסרים שדות חובה לקורס");
   }
 
@@ -52,18 +53,15 @@ export const createCourseService = async ({
   // בדיקה שהיוצר קיים
   if (creatorType === "Instructor") {
     const instructor = await Instructor.findById(creatorId);
-    if (!instructor) {
-      throw new Error("מדריך לא נמצא");
-    }
+    if (!instructor) throw new Error("מדריך לא נמצא");
   }
 
   if (creatorType === "School") {
     const school = await School.findById(creatorId);
-    if (!school) {
-      throw new Error("בית ספר לא נמצא");
-    }
+    if (!school) throw new Error("בית ספר לא נמצא");
   }
 
+  // מניעת קורס כפול לאותו יוצר
   const existingCourse = await Course.findOne({
     title,
     createdBy: creatorId,
@@ -79,7 +77,10 @@ export const createCourseService = async ({
     description,
     price,
     category,
+    targetAudience,
+    level,
     image,
+    status: "טיוטה",
     createdBy: creatorId,
     createdByModel: creatorType,
   });
@@ -91,7 +92,7 @@ export const createCourseService = async ({
    GET ALL COURSES
 ===================== */
 export const getAllCoursesService = async () => {
-  return Course.find()
+  return Course.find({ status: "פעיל" })
     .sort({ createdAt: -1 });
 };
 
@@ -136,7 +137,11 @@ export const getCoursesByCreatorService = async ({
 /* =====================
    UPDATE COURSE
 ===================== */
-export const updateCourseService = async (courseId, data) => {
+export const updateCourseService = async (
+  courseId,
+  data,
+  user // req.user
+) => {
   if (!isValidObjectId(courseId)) {
     throw new Error("מזהה קורס לא תקין");
   }
@@ -145,18 +150,22 @@ export const updateCourseService = async (courseId, data) => {
     throw new Error("לא נשלחו נתונים לעדכון");
   }
 
-  // שדות שאסור לעדכן
-  const forbiddenFields = [
-    "_id",
-    "createdBy",
-    "createdByModel",
-  ];
+  const course = await Course.findById(courseId);
+  if (!course) {
+    throw new Error("קורס לא נמצא");
+  }
 
-  forbiddenFields.forEach((field) => {
-    if (field in data) {
-      delete data[field];
-    }
-  });
+  // // 🔐 בדיקת בעלות
+  // if (
+  //   course.createdBy.toString() !== user._id.toString() ||
+  //   course.createdByModel !== user.role
+  // ) {
+  //   throw new Error("אין הרשאה לעדכן קורס זה");
+  // }
+
+  // שדות שאסור לעדכן
+  const forbiddenFields = ["_id", "createdBy", "createdByModel"];
+  forbiddenFields.forEach((field) => delete data[field]);
 
   if (data.category && !allowedCategories.includes(data.category)) {
     throw new Error("קטגוריית קורס לא חוקית");
@@ -168,28 +177,22 @@ export const updateCourseService = async (courseId, data) => {
     }
   }
 
-  const course = await Course.findByIdAndUpdate(
+  const updatedCourse = await Course.findByIdAndUpdate(
     courseId,
     data,
-    { new: true }
+    { new: true, runValidators: true }
   );
 
-  if (!course) {
-    throw new Error("קורס לא נמצא");
-  }
-
-  return course;
+  return updatedCourse;
 };
 
 /* =====================
    DELETE COURSE
 ===================== */
-
-
-
-
-
-export const deleteCourseService = async (courseId) => {
+export const deleteCourseService = async (
+  courseId,
+  user // req.user
+) => {
   if (!isValidObjectId(courseId)) {
     throw new Error("מזהה קורס לא תקין");
   }
@@ -198,6 +201,15 @@ export const deleteCourseService = async (courseId) => {
   if (!course) {
     throw new Error("קורס לא נמצא");
   }
+
+  // // 🔐 בדיקת בעלות
+  // if (
+  //   course.createdBy.toString() !== user._id.toString() ||
+  //   course.createdByModel !== user.role
+  // ) {
+  //   throw new Error("אין הרשאה למחוק קורס זה");
+  // }
+
   const registrationsCount = await Registration.countDocuments({
     course: courseId,
   });
@@ -205,7 +217,6 @@ export const deleteCourseService = async (courseId) => {
   if (registrationsCount > 0) {
     throw new Error("לא ניתן למחוק קורס שיש אליו נרשמים");
   }
-
 
   await course.deleteOne();
 
