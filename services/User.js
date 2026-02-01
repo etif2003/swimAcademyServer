@@ -3,11 +3,9 @@ import { User } from "../models/User.js";
 import { generateToken } from "../utils/jwt.js";
 import mongoose from "mongoose";
 
-
 /* ===== helpers ===== */
 const isValidEmail = (email) => {
-  const regex =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
 };
 
@@ -15,12 +13,10 @@ const isStrongPassword = (password) => {
   return password && password.length >= 6;
 };
 
-
 const isValidPhone = (phone) => {
   const regex = /^05\d{8}$/;
   return regex.test(phone);
 };
-
 
 //REGISTER
 export const registerUserService = async ({
@@ -38,7 +34,7 @@ export const registerUserService = async ({
     throw new Error("כתובת האימייל אינה תקינה");
   }
 
-   if (!isValidPhone(phone)) {
+  if (!isValidPhone(phone)) {
     throw new Error("מספר הטלפון אינו תקין");
   }
 
@@ -71,7 +67,6 @@ export const registerUserService = async ({
   };
 };
 
-
 //LOGIN
 export const loginUserService = async ({ email, password }) => {
   if (!email || !password) {
@@ -82,7 +77,8 @@ export const loginUserService = async ({ email, password }) => {
     throw new Error("כתובת האימייל אינה תקינה");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
+
   if (!user) {
     throw new Error("אימייל או סיסמה שגויים");
   }
@@ -101,7 +97,6 @@ export const loginUserService = async ({ email, password }) => {
   };
 };
 
-
 //CHANGE PASSWORD
 export const changePasswordService = async ({
   userId,
@@ -112,20 +107,16 @@ export const changePasswordService = async ({
     throw new Error("יש להזין סיסמה נוכחית וסיסמה חדשה");
   }
 
-    if (!isStrongPassword(newPassword)) {
-
+  if (!isStrongPassword(newPassword)) {
     throw new Error("הסיסמה החדשה חייבת להכיל לפחות 6 תווים");
   }
 
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).select("+password");
   if (!user) {
     throw new Error("משתמש לא נמצא");
   }
 
-  const isMatch = bcrypt.compareSync(
-    currentPassword,
-    user.password
-  );
+  const isMatch = bcrypt.compareSync(currentPassword, user.password);
 
   if (!isMatch) {
     throw new Error("הסיסמה הנוכחית שגויה");
@@ -139,7 +130,6 @@ export const changePasswordService = async ({
 
   return { message: "הסיסמה עודכנה בהצלחה" };
 };
-
 
 //GET ALL USERS
 export const getAllUsersService = async () => {
@@ -163,7 +153,6 @@ export const updateUserService = async (userId, data) => {
     throw new Error("מזהה משתמש חסר");
   }
 
-  
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     throw new Error("מזהה משתמש לא תקין");
   }
@@ -196,18 +185,13 @@ export const updateUserService = async (userId, data) => {
     }
   }
 
-
   if (data.phone && !isValidPhone(data.phone)) {
-  throw new Error("מספר הטלפון אינו תקין");
-}
+    throw new Error("מספר הטלפון אינו תקין");
+  }
 
- 
-
-  const user = await User.findByIdAndUpdate(
-    userId,
-    data,
-    { new: true }
-  ).select("-password");
+  const user = await User.findByIdAndUpdate(userId, data, { new: true }).select(
+    "-password",
+  );
 
   if (!user) {
     throw new Error("משתמש לא נמצא");
@@ -216,23 +200,58 @@ export const updateUserService = async (userId, data) => {
   return user;
 };
 
-
 //DELETE USER
 export const deleteUserService = async (userId) => {
-  const user = await User.findById(userId);
-
-  if (!user) {
-    throw new Error("משתמש לא נמצא");
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new Error("מזהה משתמש לא תקין");
   }
 
-  await user.deleteOne();
+  const user = await User.findById(userId);
+  if (!user) throw new Error("משתמש לא נמצא");
 
+  // בדיקות לפי סוג משתמש
+  if (user.role === "Student") {
+    const registrations = await Registration.find({ student: userId });
+    if (registrations.length > 0) {
+      user.status = "Inactive";
+      await user.save();
+      return {
+        message: "סטודנט לא נמחק כי יש לו הרשמות, הסטטוס הועבר ל'לא פעיל'",
+      };
+    }
+  }
+
+  if (user.role === "Instructor") {
+    const courses = await Course.find({ instructor: userId });
+    if (courses.length > 0) {
+      user.status = "Inactive";
+      await user.save();
+      return {
+        message: "מדריך לא נמחק כי יש לו קורסים, הסטטוס הועבר ל'לא פעיל'",
+      };
+    }
+  }
+
+  if (user.role === "School") {
+    const courses = await Course.find({ school: userId });
+    if (courses.length > 0) {
+      user.status = "Inactive";
+      await user.save();
+      return {
+        message:
+          "בית ספר לא נמחק כי יש לו קורסים פעילים, הסטטוס הועבר ל'לא פעיל'",
+      };
+    }
+  }
+
+  // אין קשרים – אפשר למחוק
+  await user.deleteOne();
   return { message: "המשתמש נמחק בהצלחה" };
 };
 
 //UPDATE USER ROLE
 export const updateUserRoleService = async (userId, role) => {
-  const allowedRoles = ["student", "instructor", "school", "admin"];
+  const allowedRoles = ["Student", "Instructor", "School", "Admin"];
 
   if (!allowedRoles.includes(role)) {
     throw new Error("תפקיד לא חוקי");
@@ -241,7 +260,7 @@ export const updateUserRoleService = async (userId, role) => {
   const user = await User.findByIdAndUpdate(
     userId,
     { role },
-    { new: true }
+    { new: true },
   ).select("-password");
 
   if (!user) {

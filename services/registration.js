@@ -8,7 +8,7 @@ import { Course } from "../models/Course.js";
 const isValidObjectId = (id) =>
   mongoose.Types.ObjectId.isValid(id);
 
-const allowedStatuses = ["pending", "paid", "cancelled"];
+const allowedStatuses = ["Pending", "Paid", "Cancelled"];
 
 /* =====================
    CREATE REGISTRATION
@@ -63,7 +63,7 @@ export const getRegistrationsByUserService = async (userId) => {
 
   return Registration.find({ student: userId })
     .populate("course")
-    .sort({ registrationDate: -1 });
+    .sort({ createdAt: -1 });
 };
 
 /* =====================
@@ -76,7 +76,7 @@ export const getRegistrationsByCourseService = async (courseId) => {
 
   return Registration.find({ course: courseId })
     .populate("student", "-password")
-    .sort({ registrationDate: -1 });
+    .sort({ createdAt: -1 });
 };
 
 /* =====================

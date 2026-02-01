@@ -6,11 +6,10 @@ import { Registration } from "../models/Registration.js";
 
 /* ===== helpers ===== */
 
-const isValidObjectId = (id) =>
-  mongoose.Types.ObjectId.isValid(id);
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const allowedCreators = ["Instructor", "School"];
-const allowedCategories = ["לימוד", "הכשרה", "טיפולי"];
+const allowedCategories = ["Learning", "Training", "Therapy"];
 
 /* =====================
    CREATE COURSE
@@ -38,7 +37,13 @@ export const createCourseService = async ({
     throw new Error("סוג יוצר לא חוקי");
   }
 
-  if (!title || !description || price === undefined || !category || !targetAudience) {
+  if (
+    !title ||
+    !description ||
+    price === undefined ||
+    !category ||
+    !targetAudience
+  ) {
     throw new Error("חסרים שדות חובה לקורס");
   }
 
@@ -80,7 +85,7 @@ export const createCourseService = async ({
     targetAudience,
     level,
     image,
-    status: "טיוטה",
+    status: "Draft",
     createdBy: creatorId,
     createdByModel: creatorType,
   });
@@ -92,8 +97,7 @@ export const createCourseService = async ({
    GET ALL COURSES
 ===================== */
 export const getAllCoursesService = async () => {
-  return Course.find({ status: "פעיל" })
-    .sort({ createdAt: -1 });
+  return Course.find({ status: "Active" }).sort({ createdAt: -1 });
 };
 
 /* =====================
@@ -140,7 +144,7 @@ export const getCoursesByCreatorService = async ({
 export const updateCourseService = async (
   courseId,
   data,
-  user // req.user
+  user, // req.user
 ) => {
   if (!isValidObjectId(courseId)) {
     throw new Error("מזהה קורס לא תקין");
@@ -177,11 +181,10 @@ export const updateCourseService = async (
     }
   }
 
-  const updatedCourse = await Course.findByIdAndUpdate(
-    courseId,
-    data,
-    { new: true, runValidators: true }
-  );
+  const updatedCourse = await Course.findByIdAndUpdate(courseId, data, {
+    new: true,
+    runValidators: true,
+  });
 
   return updatedCourse;
 };
@@ -191,7 +194,7 @@ export const updateCourseService = async (
 ===================== */
 export const deleteCourseService = async (
   courseId,
-  user // req.user
+  user, // req.user
 ) => {
   if (!isValidObjectId(courseId)) {
     throw new Error("מזהה קורס לא תקין");
@@ -210,12 +213,11 @@ export const deleteCourseService = async (
   //   throw new Error("אין הרשאה למחוק קורס זה");
   // }
 
-  const registrationsCount = await Registration.countDocuments({
-    course: courseId,
-  });
-
-  if (registrationsCount > 0) {
-    throw new Error("לא ניתן למחוק קורס שיש אליו נרשמים");
+  const registrations = await Registration.find({ course: courseId });
+  if (registrations.length > 0) {
+    course.status = "Inactive"; // או "cancelled"
+    await course.save();
+    return { message: "הקורס לא נמחק כי יש הרשמות, הסטטוס הועבר ל'לא פעיל'" };
   }
 
   await course.deleteOne();

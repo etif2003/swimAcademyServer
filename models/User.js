@@ -31,14 +31,14 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["student", "instructor", "school", "admin"],
-      default: "student",
+      enum: ["Student", "Instructor", "School", "Admin"],
+      default: "Student",
     },
 
     status: {
       type: String,
-      enum: ["active", "blocked"],
-      default: "active",
+      enum: ["Active", "Inactive", "Blocked"],
+      default: "Active",
     },
 
     image: {
@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const User = mongoose.model("User", userSchema);

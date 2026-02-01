@@ -51,8 +51,8 @@ const schoolSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["טיוטה", "מאושר", "מושעה"],
-      default: "טיוטה",
+      enum: ["Draft", "Active", "Inactive"],
+      default: "Draft",
     },
   },
   { timestamps: true }

@@ -20,7 +20,7 @@ export const createInstructorService = async ({
   userId,
   fullName,
   phone,
-  experience,
+  experienceYears,
   certificates,
   workArea,
   hourlyRate,
@@ -30,7 +30,7 @@ export const createInstructorService = async ({
     throw new Error("מזהה משתמש חסר");
   }
 
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
+  if (!isValidObjectId(userId)) {
     throw new Error("מזהה משתמש לא תקין");
   }
 
@@ -39,8 +39,8 @@ export const createInstructorService = async ({
     throw new Error("משתמש לא נמצא");
   }
 
-  if (user.role !== "instructor") {
-    throw new Error("המשתמש אינו מדריך");
+  if (user.role !== "Instructor") {
+    throw new Error("המשתמש אינו רשום כמדריך");
   }
 
   const existingInstructor = await Instructor.findOne({ user: userId });
@@ -48,7 +48,7 @@ export const createInstructorService = async ({
     throw new Error("כבר קיים פרופיל מדריך למשתמש זה");
   }
 
-  if (!experience || !workArea || !hourlyRate) {
+  if (!workArea) {
     throw new Error("חסרים פרטי חובה לפרופיל מדריך");
   }
 
@@ -63,11 +63,13 @@ export const createInstructorService = async ({
     user: user._id,
     fullName: instructorFullName,
     phone: instructorPhone,
-    experience,
+    experienceYears,
     certificates: certificates || [],
     workArea,
     hourlyRate,
     image,
+    status: "Draft", // ברירת מחדל מהמודל
+    available: true,
   });
 
   return instructor;
@@ -91,6 +93,13 @@ export const getInstructorByUserService = async (userId) => {
 };
 
 /* =====================
+   GET ALL INSTRUCTORS
+===================== */
+export const getAllInstructorsService = async () => {
+  return Instructor.find().sort({ createdAt: -1 });
+};
+
+/* =====================
    GET INSTRUCTOR BY ID
 ===================== */
 export const getInstructorByIdService = async (instructorId) => {
@@ -101,17 +110,10 @@ export const getInstructorByIdService = async (instructorId) => {
   const instructor = await Instructor.findById(instructorId);
 
   if (!instructor) {
-    throw new Error("מדריך לא נמצא");
+    throw new Error("פרופיל מדריך לא נמצא");
   }
 
   return instructor;
-};
-
-/* =====================
-   GET ALL INSTRUCTORS
-===================== */
-export const getAllInstructorsService = async () => {
-  return Instructor.find().sort({ createdAt: -1 });
 };
 
 /* =====================
@@ -138,11 +140,10 @@ export const updateInstructorService = async (instructorId, data) => {
     throw new Error("מספר הטלפון אינו תקין");
   }
 
-  const instructor = await Instructor.findByIdAndUpdate(
-    instructorId,
-    data,
-    { new: true }
-  );
+  const instructor = await Instructor.findByIdAndUpdate(instructorId, data, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!instructor) {
     throw new Error("מדריך לא נמצא");
@@ -162,6 +163,15 @@ export const deleteInstructorService = async (instructorId) => {
   const instructor = await Instructor.findById(instructorId);
   if (!instructor) {
     throw new Error("מדריך לא נמצא");
+  }
+
+  const courses = await Course.find({ instructor: instructorId });
+  if (courses.length > 0) {
+    instructor.status = "Inactive";
+    await instructor.save();
+    return {
+      message: "מדריך לא נמחק כי יש לו קורסים פעילים, הסטטוס הועבר ל'לא פעיל'",
+    };
   }
 
   await instructor.deleteOne();

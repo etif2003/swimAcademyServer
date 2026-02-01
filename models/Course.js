@@ -22,19 +22,19 @@ const courseSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["לימוד", "הכשרה", "טיפולי"],
+      enum: ["Learning", "Training", "Therapy"],
       required: true,
     },
 
     targetAudience: {
       type: String,
-      enum: ["ילדים", "נוער", "מבוגרים", "גיל הזהב"],
+      enum: ["Children", "Teens", "Adults", "Seniors"],
       required: true,
     },
 
     level: {
       type: String,
-      enum: ["מתחילים", "מתקדמים", "מקצועי"],
+      enum: ["Beginner", "Advanced", "Professional"],
     },
 
     image: {
@@ -42,7 +42,7 @@ const courseSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // 🔢 משתתפים
+    // 🔢 Participants
     maxParticipants: {
       type: Number,
       min: 1,
@@ -54,14 +54,14 @@ const courseSchema = new mongoose.Schema(
       min: 0,
     },
 
-    // 📌 סטטוס קורס
+    // 📌 Course status
     status: {
       type: String,
-      enum: ["טיוטה", "פעיל", "לא פעיל", "הסתיים"],
-      default: "טיוטה",
+      enum: ["Draft", "Active", "Inactive", "Completed"],
+      default: "Draft",
     },
 
-    // ⏱ מבנה הקורס
+    // ⏱ Course structure
     durationWeeks: {
       type: Number,
       min: 1,
@@ -72,13 +72,13 @@ const courseSchema = new mongoose.Schema(
       min: 1,
     },
 
-    // 📍 מיקום (אם פיזי)
+    // 📍 Location (if physical)
     location: {
       poolName: { type: String, trim: true },
       city: { type: String, trim: true },
     },
 
-    // 👤 מי יצר את הקורס
+    // 👤 Course creator
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -91,10 +91,10 @@ const courseSchema = new mongoose.Schema(
       enum: ["Instructor", "School"],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-// 🔍 אינדקסים לפילטרים וחיפוש
+// 🔍 Indexes for filtering and search
 courseSchema.index({
   category: 1,
   targetAudience: 1,

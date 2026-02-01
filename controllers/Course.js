@@ -15,7 +15,7 @@ import { serverResponse } from "../utils/server-response.js";
 export const createCourseController = async (req, res) => {
   try {
     // רק Instructor או School יכולים ליצור קורס
-    if (!["instructor", "school"].includes(req.user.role)) {
+    if (!["Instructor", "School"].includes(req.user.role)) {
       return serverResponse(res, 403, {
         message: "אין הרשאה ליצור קורס",
       });
@@ -25,7 +25,7 @@ export const createCourseController = async (req, res) => {
       ...req.body,
       creatorId: req.user._id,
       creatorType:
-        req.user.role === "instructor"
+        req.user.role === "Instructor"
           ? "Instructor"
           : "School",
     });

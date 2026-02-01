@@ -22,6 +22,7 @@ export const createSchoolService = async ({
   logo,
   contactName,
   contactPhone,
+  contactEmail,
   image,
 }) => {
   if (!ownerId) {
@@ -41,7 +42,7 @@ export const createSchoolService = async ({
     throw new Error("משתמש לא נמצא");
   }
 
-  if (user.role !== "school") {
+  if (user.role !== "School") {
     throw new Error("המשתמש אינו מוגדר כבעל בית ספר");
   }
 
@@ -57,11 +58,12 @@ export const createSchoolService = async ({
   const school = await School.create({
     owner: ownerId,
     name,
-    location,
+    location: location || {},
     description,
     logo,
     contactName,
     contactPhone,
+    contactEmail,
     image,
   });
 
@@ -132,11 +134,7 @@ export const updateSchoolService = async (schoolId, data) => {
     throw new Error("מספר טלפון ליצירת קשר אינו תקין");
   }
 
-  const school = await School.findByIdAndUpdate(
-    schoolId,
-    data,
-    { new: true }
-  );
+  const school = await School.findByIdAndUpdate(schoolId, data, { new: true });
 
   if (!school) {
     throw new Error("בית ספר לא נמצא");
@@ -156,6 +154,16 @@ export const deleteSchoolService = async (schoolId) => {
   const school = await School.findById(schoolId);
   if (!school) {
     throw new Error("בית ספר לא נמצא");
+  }
+
+  const courses = await Course.find({ school: schoolId });
+  if (courses.length > 0) {
+    school.status = "Inactive";
+    await school.save();
+    return {
+      message:
+        "בית ספר לא נמחק כי יש לו קורסים פעילים, הסטטוס הועבר ל'לא פעיל'",
+    };
   }
 
   await school.deleteOne();

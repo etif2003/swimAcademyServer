@@ -34,18 +34,6 @@ export const getInstructorByUserController = async (req, res) => {
 };
 
 /* =====================
-   GET INSTRUCTOR BY ID
-===================== */
-export const getInstructorByIdController = async (req, res) => {
-  try {
-    const instructor = await getInstructorByIdService(req.params.id);
-    serverResponse(res, 200, instructor);
-  } catch (err) {
-    serverResponse(res, 404, { message: err.message });
-  }
-};
-
-/* =====================
    GET ALL INSTRUCTORS
 ===================== */
 export const getAllInstructorsController = async (req, res) => {
@@ -58,13 +46,25 @@ export const getAllInstructorsController = async (req, res) => {
 };
 
 /* =====================
+   GET INSTRUCTOR BY ID
+===================== */
+export const getInstructorByIdController = async (req, res) => {
+  try {
+    const instructor = await getInstructorByIdService(req.params.id);
+    serverResponse(res, 200, instructor);
+  } catch (err) {
+    serverResponse(res, 404, { message: err.message });
+  }
+};
+
+/* =====================
    UPDATE INSTRUCTOR
 ===================== */
 export const updateInstructorController = async (req, res) => {
   try {
     const updatedInstructor = await updateInstructorService(
       req.params.id,
-      req.body
+      req.body,
     );
     serverResponse(res, 200, updatedInstructor);
   } catch (err) {
