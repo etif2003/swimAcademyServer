@@ -3,6 +3,8 @@ import { User } from "../models/User.js";
 import { generateToken } from "../utils/jwt.js";
 import mongoose from "mongoose";
 
+const allowedRoles = ["Student", "Instructor", "School"];
+
 /* ===== helpers ===== */
 const isValidEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,6 +47,10 @@ export const registerUserService = async ({
   const exists = await User.findOne({ email });
   if (exists) {
     throw new Error("משתמש עם אימייל זה כבר קיים");
+  }
+
+  if (role && !allowedRoles.includes(role)) {
+    throw new Error("תפקיד לא חוקי");
   }
 
   const salt = bcrypt.genSaltSync(10);
@@ -222,7 +228,10 @@ export const deleteUserService = async (userId) => {
   }
 
   if (user.role === "Instructor") {
-    const courses = await Course.find({ instructor: userId });
+    const courses = await Course.find({
+      createdBy: userId,
+      createdByModel: "Instructor",
+    });
     if (courses.length > 0) {
       user.status = "Inactive";
       await user.save();
@@ -233,7 +242,10 @@ export const deleteUserService = async (userId) => {
   }
 
   if (user.role === "School") {
-    const courses = await Course.find({ school: userId });
+    const courses = await Course.find({
+      createdBy: userId,
+      createdByModel: "School",
+    });
     if (courses.length > 0) {
       user.status = "Inactive";
       await user.save();
