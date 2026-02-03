@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.js";
 import instructorRoutes from "./routes/instructor.js";
 import schoolRoutes from "./routes/school.js";
 import registrationRoutes from "./routes/registration.js";
+import schoolInstructorRoutes from "./routes/school-instructor.js";
 
 
 const port = process.env.PORT || 4000;
@@ -24,6 +25,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/instructors", instructorRoutes);
 app.use("/api/schools", schoolRoutes);
 app.use("/api/registrations", registrationRoutes);
+app.use("/api/school-instructors", schoolInstructorRoutes);
 
 
 
