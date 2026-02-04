@@ -4,7 +4,7 @@ import { connectDB } from "./db/db.js";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 
-import courseRoutes from "./routes/Course.js";
+import courseRoutes from "./routes/course.js";
 import userRoutes from "./routes/user.js";
 import instructorRoutes from "./routes/instructor.js";
 import schoolRoutes from "./routes/school.js";

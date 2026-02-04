@@ -9,9 +9,7 @@ import {
 
 import { serverResponse } from "../utils/server-response.js";
 
-/* =====================
-   CREATE SCHOOL
-===================== */
+   //CREATE SCHOOL
 export const createSchoolController = async (req, res) => {
   try {
     const school = await createSchoolService(req.body);
@@ -21,9 +19,7 @@ export const createSchoolController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET SCHOOL BY OWNER
-===================== */
+   //GET SCHOOL BY OWNER
 export const getSchoolByOwnerController = async (req, res) => {
   try {
     const { ownerId } = req.params;
@@ -35,9 +31,7 @@ export const getSchoolByOwnerController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET SCHOOL BY ID
-===================== */
+   //GET SCHOOL BY ID
 export const getSchoolByIdController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,9 +43,7 @@ export const getSchoolByIdController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET ALL SCHOOLS
-===================== */
+  // GET ALL SCHOOLS
 export const getAllSchoolsController = async (req, res) => {
   try {
     const schools = await getAllSchoolsService();
@@ -61,9 +53,7 @@ export const getAllSchoolsController = async (req, res) => {
   }
 };
 
-/* =====================
-   UPDATE SCHOOL
-===================== */
+   //UPDATE SCHOOL
 export const updateSchoolController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -79,9 +69,7 @@ export const updateSchoolController = async (req, res) => {
   }
 };
 
-/* =====================
-   DELETE SCHOOL
-===================== */
+  // DELETE SCHOOL
 export const deleteSchoolController = async (req, res) => {
   try {
     const { id } = req.params;

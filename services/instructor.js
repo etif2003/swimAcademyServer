@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 import { Instructor } from "../models/Instructor.js";
 import { User } from "../models/User.js";
 
-/* ===== helpers ===== */
-
+//helpers 
 const isValidObjectId = (id) => {
   return mongoose.Types.ObjectId.isValid(id);
 };
@@ -13,9 +12,8 @@ const isValidPhone = (phone) => {
   return regex.test(phone);
 };
 
-/* =====================
-   CREATE INSTRUCTOR PROFILE
-===================== */
+   //CREATE INSTRUCTOR PROFILE
+
 export const createInstructorService = async ({
   userId,
   fullName,
@@ -75,9 +73,8 @@ export const createInstructorService = async ({
   return instructor;
 };
 
-/* =====================
-   GET INSTRUCTOR BY USER
-===================== */
+  // GET INSTRUCTOR BY USER
+
 export const getInstructorByUserService = async (userId) => {
   if (!isValidObjectId(userId)) {
     throw new Error("מזהה משתמש לא תקין");
@@ -92,16 +89,12 @@ export const getInstructorByUserService = async (userId) => {
   return instructor;
 };
 
-/* =====================
-   GET ALL INSTRUCTORS
-===================== */
+  // GET ALL INSTRUCTORS
 export const getAllInstructorsService = async () => {
   return Instructor.find().sort({ createdAt: -1 });
 };
 
-/* =====================
-   GET INSTRUCTOR BY ID
-===================== */
+   //GET INSTRUCTOR BY ID
 export const getInstructorByIdService = async (instructorId) => {
   if (!isValidObjectId(instructorId)) {
     throw new Error("מזהה מדריך לא תקין");
@@ -116,9 +109,7 @@ export const getInstructorByIdService = async (instructorId) => {
   return instructor;
 };
 
-/* =====================
-   UPDATE INSTRUCTOR
-===================== */
+   //UPDATE INSTRUCTOR
 export const updateInstructorService = async (instructorId, data) => {
   if (!isValidObjectId(instructorId)) {
     throw new Error("מזהה מדריך לא תקין");
@@ -152,9 +143,7 @@ export const updateInstructorService = async (instructorId, data) => {
   return instructor;
 };
 
-/* =====================
-   DELETE INSTRUCTOR
-===================== */
+  // DELETE INSTRUCTOR
 export const deleteInstructorService = async (instructorId) => {
   if (!isValidObjectId(instructorId)) {
     throw new Error("מזהה מדריך לא תקין");

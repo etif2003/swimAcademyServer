@@ -42,7 +42,7 @@ const courseSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // 🔢 Participants
+    // Participants
     maxParticipants: {
       type: Number,
       min: 1,
@@ -54,14 +54,14 @@ const courseSchema = new mongoose.Schema(
       min: 0,
     },
 
-    // 📌 Course status
+    // Course status
     status: {
       type: String,
       enum: ["Draft", "Active", "Inactive", "Completed"],
       default: "Draft",
     },
 
-    // ⏱ Course structure
+    
     durationWeeks: {
       type: Number,
       min: 1,
@@ -72,13 +72,11 @@ const courseSchema = new mongoose.Schema(
       min: 1,
     },
 
-    // 📍 Location (if physical)
     location: {
       poolName: { type: String, trim: true },
       city: { type: String, trim: true },
     },
 
-    // 👤 Course creator
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -94,7 +92,7 @@ const courseSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// 🔍 Indexes for filtering and search
+//  Indexes for filtering and search
 courseSchema.index({
   category: 1,
   targetAudience: 1,

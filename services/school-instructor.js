@@ -3,12 +3,10 @@ import { SchoolInstructor } from "../models/SchoolInstructor.js";
 import { School } from "../models/School.js";
 import { Instructor } from "../models/Instructor.js";
 
-/* ===== helpers ===== */
+//helpers 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-/* =====================
-   CREATE SCHOOL INSTRUCTOR
-===================== */
+  // CREATE SCHOOL INSTRUCTOR
 export const createSchoolInstructorService = async ({
   instructorId,
   schoolId,
@@ -48,9 +46,7 @@ export const createSchoolInstructorService = async ({
   });
 };
 
-/* =====================
-   GET INSTRUCTORS BY SCHOOL
-===================== */
+   //GET INSTRUCTORS BY SCHOOL
 export const getInstructorsBySchoolService = async (schoolId) => {
   if (!isValidObjectId(schoolId)) {
     throw new Error("מזהה בית ספר לא תקין");
@@ -61,9 +57,7 @@ export const getInstructorsBySchoolService = async (schoolId) => {
     .sort({ createdAt: -1 });
 };
 
-/* =====================
-   GET SCHOOLS BY INSTRUCTOR
-===================== */
+   //GET SCHOOLS BY INSTRUCTOR
 export const getSchoolsByInstructorService = async (instructorId) => {
   if (!isValidObjectId(instructorId)) {
     throw new Error("מזהה מדריך לא תקין");
@@ -77,9 +71,7 @@ export const getSchoolsByInstructorService = async (instructorId) => {
     .sort({ createdAt: -1 });
 };
 
-/* =====================
-   UPDATE SCHOOL INSTRUCTOR
-===================== */
+   //UPDATE SCHOOL INSTRUCTOR
 export const updateSchoolInstructorService = async (id, data) => {
   if (!isValidObjectId(id)) {
     throw new Error("מזהה שיוך לא תקין");
@@ -100,9 +92,7 @@ export const updateSchoolInstructorService = async (id, data) => {
   return record;
 };
 
-/* =====================
-   DELETE SCHOOL INSTRUCTOR
-===================== */
+  // DELETE SCHOOL INSTRUCTOR
 export const deleteSchoolInstructorService = async (id) => {
   if (!isValidObjectId(id)) {
     throw new Error("מזהה שיוך לא תקין");

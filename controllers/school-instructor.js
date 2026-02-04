@@ -8,9 +8,7 @@ import {
 
 import { serverResponse } from "../utils/server-response.js";
 
-/* =====================
-   CREATE SCHOOL INSTRUCTOR
-===================== */
+   //CREATE SCHOOL INSTRUCTOR
 export const createSchoolInstructorController = async (req, res) => {
   try {
     const result = await createSchoolInstructorService(req.body);
@@ -20,9 +18,7 @@ export const createSchoolInstructorController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET INSTRUCTORS BY SCHOOL
-===================== */
+//GET INSTRUCTORS BY SCHOOL
 export const getInstructorsBySchoolController = async (req, res) => {
   try {
     const result = await getInstructorsBySchoolService(req.params.schoolId);
@@ -32,9 +28,9 @@ export const getInstructorsBySchoolController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET SCHOOLS BY INSTRUCTOR
-===================== */
+
+   //GET SCHOOLS BY INSTRUCTOR
+
 export const getSchoolsByInstructorController = async (req, res) => {
   try {
     const result = await getSchoolsByInstructorService(
@@ -46,9 +42,8 @@ export const getSchoolsByInstructorController = async (req, res) => {
   }
 };
 
-/* =====================
-   UPDATE SCHOOL INSTRUCTOR
-===================== */
+
+   //UPDATE SCHOOL INSTRUCTOR
 export const updateSchoolInstructorController = async (req, res) => {
   try {
     const result = await updateSchoolInstructorService(
@@ -61,9 +56,7 @@ export const updateSchoolInstructorController = async (req, res) => {
   }
 };
 
-/* =====================
-   DELETE SCHOOL INSTRUCTOR
-===================== */
+   //DELETE SCHOOL INSTRUCTOR
 export const deleteSchoolInstructorController = async (req, res) => {
   try {
     const result = await deleteSchoolInstructorService(req.params.id);

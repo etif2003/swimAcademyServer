@@ -8,9 +8,7 @@ import {
 
 import { serverResponse } from "../utils/server-response.js";
 
-/* =====================
-   CREATE REGISTRATION
-===================== */
+   //CREATE REGISTRATION
 export const createRegistrationController = async (req, res) => {
   try {
     const registration = await createRegistrationService(req.body);
@@ -20,9 +18,7 @@ export const createRegistrationController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET REGISTRATIONS BY USER
-===================== */
+   //GET REGISTRATIONS BY USER
 export const getRegistrationsByUserController = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -36,9 +32,7 @@ export const getRegistrationsByUserController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET REGISTRATIONS BY COURSE
-===================== */
+   //GET REGISTRATIONS BY COURSE
 export const getRegistrationsByCourseController = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -52,9 +46,7 @@ export const getRegistrationsByCourseController = async (req, res) => {
   }
 };
 
-/* =====================
-   UPDATE REGISTRATION STATUS
-===================== */
+   //UPDATE REGISTRATION STATUS
 export const updateRegistrationStatusController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -69,9 +61,7 @@ export const updateRegistrationStatusController = async (req, res) => {
   }
 };
 
-/* =====================
-   DELETE REGISTRATION
-===================== */
+   //DELETE REGISTRATION
 export const deleteRegistrationController = async (req, res) => {
   try {
     const { id } = req.params;

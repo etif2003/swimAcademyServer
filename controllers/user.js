@@ -11,9 +11,7 @@ import {
 
 import { serverResponse } from "../utils/server-response.js";
 
-/* =====================
-   PUBLIC
-===================== */
+
 
 // REGISTER
 export const registerController = async (req, res) => {
@@ -35,11 +33,9 @@ export const loginController = async (req, res) => {
   }
 };
 
-/* =====================
-   AUTH REQUIRED
-===================== */
 
-// CHANGE PASSWORD (מחובר)
+
+// CHANGE PASSWORD 
 export const changePasswordController = async (req, res) => {
   try {
     const result = await changePasswordService({
@@ -67,14 +63,12 @@ export const updateMyUserController = async (req, res) => {
   }
 };
 
-// GET ME
+// GET ME - מחזיר את הטוקן
 export const getMeController = async (req, res) => {
   serverResponse(res, 200, req.user);
 };
 
-/* =====================
-   ADMIN ONLY
-===================== */
+
 
 // GET ALL USERS
 export const getAllUsersController = async (req, res) => {

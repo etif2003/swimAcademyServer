@@ -3,16 +3,13 @@ import { Registration } from "../models/Registration.js";
 import { User } from "../models/User.js";
 import { Course } from "../models/Course.js";
 
-/* ===== helpers ===== */
-
+//helpers
 const isValidObjectId = (id) =>
   mongoose.Types.ObjectId.isValid(id);
 
 const allowedStatuses = ["Pending", "Paid", "Cancelled"];
 
-/* =====================
-   CREATE REGISTRATION
-===================== */
+ //  CREATE REGISTRATION
 export const createRegistrationService = async ({
   userId,
   courseId,
@@ -67,9 +64,7 @@ export const createRegistrationService = async ({
   return registration;
 };
 
-/* =====================
-   GET REGISTRATIONS BY USER
-===================== */
+  // GET REGISTRATIONS BY USER
 export const getRegistrationsByUserService = async (userId) => {
   if (!isValidObjectId(userId)) {
     throw new Error("מזהה משתמש לא תקין");
@@ -80,9 +75,7 @@ export const getRegistrationsByUserService = async (userId) => {
     .sort({ createdAt: -1 });
 };
 
-/* =====================
-   GET REGISTRATIONS BY COURSE
-===================== */
+  // GET REGISTRATIONS BY COURSE
 export const getRegistrationsByCourseService = async (courseId) => {
   if (!isValidObjectId(courseId)) {
     throw new Error("מזהה קורס לא תקין");
@@ -93,9 +86,7 @@ export const getRegistrationsByCourseService = async (courseId) => {
     .sort({ createdAt: -1 });
 };
 
-/* =====================
-   UPDATE REGISTRATION STATUS
-===================== */
+ //  UPDATE REGISTRATION STATUS
 export const updateRegistrationStatusService = async (
   registrationId,
   status
@@ -121,9 +112,7 @@ export const updateRegistrationStatusService = async (
   return registration;
 };
 
-/* =====================
-   DELETE REGISTRATION
-===================== */
+  // DELETE REGISTRATION
 export const deleteRegistrationService = async (registrationId) => {
   if (!isValidObjectId(registrationId)) {
     throw new Error("מזהה הרשמה לא תקין");

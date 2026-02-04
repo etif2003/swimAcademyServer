@@ -23,7 +23,7 @@ const registrationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔐 למנוע הרשמה כפולה
+//  למנוע הרשמה כפולה
 registrationSchema.index(
   { student: 1, course: 1 },
   { unique: true }

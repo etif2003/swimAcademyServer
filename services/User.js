@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 const allowedRoles = ["Student", "Instructor", "School"];
 
-/* ===== helpers ===== */
+//helpers 
 const isValidEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);

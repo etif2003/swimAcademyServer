@@ -9,15 +9,10 @@ import {
 
 const router = express.Router();
 
-/* =====================
-   CREATE REGISTRATION
-===================== */
-// הרשמה לקורס (userId + courseId מגיעים ב-body)
+
+// הרשמה לקורס 
 router.post("/", createRegistrationController);
 
-/* =====================
-   GET REGISTRATIONS
-===================== */
 
 // כל ההרשמות של משתמש
 router.get(
@@ -31,18 +26,14 @@ router.get(
   getRegistrationsByCourseController
 );
 
-/* =====================
-   UPDATE REGISTRATION STATUS
-===================== */
+
 // עדכון סטטוס הרשמה
 router.put(
   "/:id/status",
   updateRegistrationStatusController
 );
 
-/* =====================
-   DELETE REGISTRATION
-===================== */
+
 // ביטול הרשמה
 router.delete("/:id", deleteRegistrationController);
 

@@ -10,15 +10,9 @@ import {
 
 const router = express.Router();
 
-/* =====================
-   CREATE COURSE
-===================== */
-// יצירת קורס (creatorId + creatorType מגיעים ב-body)
-router.post("/", createCourseController);
 
-/* =====================
-   GET COURSES
-===================== */
+// יצירת קורס 
+router.post("/", createCourseController);
 
 // כל הקורסים
 router.get("/", getAllCoursesController);
@@ -32,15 +26,11 @@ router.get(
   getCoursesByCreatorController
 );
 
-/* =====================
-   UPDATE COURSE
-===================== */
+
 // עדכון קורס לפי ID
 router.put("/:id", updateCourseController);
 
-/* =====================
-   DELETE COURSE
-===================== */
+
 // מחיקת קורס לפי ID
 router.delete("/:id", deleteCourseController);
 

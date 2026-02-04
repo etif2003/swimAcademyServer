@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 import { School } from "../models/School.js";
 import { User } from "../models/User.js";
 
-/* ===== helpers ===== */
-
+// helpers
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const isValidPhone = (phone) => {
@@ -11,9 +10,7 @@ const isValidPhone = (phone) => {
   return regex.test(phone);
 };
 
-/* =====================
-   CREATE SCHOOL
-===================== */
+//CREATE SCHOOL
 export const createSchoolService = async ({
   ownerId,
   name,
@@ -70,9 +67,7 @@ export const createSchoolService = async ({
   return school;
 };
 
-/* =====================
-   GET SCHOOL BY OWNER
-===================== */
+//GET SCHOOL BY OWNER
 export const getSchoolByOwnerService = async (ownerId) => {
   if (!isValidObjectId(ownerId)) {
     throw new Error("מזהה משתמש לא תקין");
@@ -87,9 +82,7 @@ export const getSchoolByOwnerService = async (ownerId) => {
   return school;
 };
 
-/* =====================
-   GET SCHOOL BY ID
-===================== */
+// GET SCHOOL BY ID
 export const getSchoolByIdService = async (schoolId) => {
   if (!isValidObjectId(schoolId)) {
     throw new Error("מזהה בית ספר לא תקין");
@@ -104,16 +97,12 @@ export const getSchoolByIdService = async (schoolId) => {
   return school;
 };
 
-/* =====================
-   GET ALL SCHOOLS
-===================== */
+// GET ALL SCHOOLS
 export const getAllSchoolsService = async () => {
   return School.find().sort({ createdAt: -1 });
 };
 
-/* =====================
-   UPDATE SCHOOL
-===================== */
+//  UPDATE SCHOOL
 export const updateSchoolService = async (schoolId, data) => {
   if (!isValidObjectId(schoolId)) {
     throw new Error("מזהה בית ספר לא תקין");
@@ -143,9 +132,7 @@ export const updateSchoolService = async (schoolId, data) => {
   return school;
 };
 
-/* =====================
-   DELETE SCHOOL
-===================== */
+//DELETE SCHOOL
 export const deleteSchoolService = async (schoolId) => {
   if (!isValidObjectId(schoolId)) {
     throw new Error("מזהה בית ספר לא תקין");

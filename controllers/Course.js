@@ -9,9 +9,8 @@ import {
 
 import { serverResponse } from "../utils/server-response.js";
 
-/* =====================
-   CREATE COURSE
-===================== */
+  //CREATE COURSE
+
 export const createCourseController = async (req, res) => {
   try {
     // רק Instructor או School יכולים ליצור קורס
@@ -36,9 +35,8 @@ export const createCourseController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET ALL COURSES
-===================== */
+  //GET ALL COURSES
+
 export const getAllCoursesController = async (req, res) => {
   try {
     const courses = await getAllCoursesService();
@@ -48,9 +46,8 @@ export const getAllCoursesController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET COURSE BY ID
-===================== */
+   //GET COURSE BY ID
+
 export const getCourseByIdController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -63,9 +60,7 @@ export const getCourseByIdController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET COURSES BY CREATOR
-===================== */
+   //GET COURSES BY CREATOR
 export const getCoursesByCreatorController = async (req, res) => {
   try {
     const { creatorId, creatorType } = req.params;
@@ -81,9 +76,7 @@ export const getCoursesByCreatorController = async (req, res) => {
   }
 };
 
-/* =====================
-   UPDATE COURSE
-===================== */
+//UPDATE COURSE
 export const updateCourseController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -100,9 +93,9 @@ export const updateCourseController = async (req, res) => {
   }
 };
 
-/* =====================
-   DELETE COURSE
-===================== */
+
+   //DELETE COURSE
+
 export const deleteCourseController = async (req, res) => {
   try {
     const { id } = req.params;

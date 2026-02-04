@@ -4,19 +4,14 @@ import { Instructor } from "../models/Instructor.js";
 import { School } from "../models/School.js";
 import { Registration } from "../models/Registration.js";
 
-/* ===== helpers ===== */
-
+//helpers
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
-
 const allowedCreators = ["Instructor", "School"];
 const allowedCategories = ["Learning", "Training", "Therapy"];
 
-/* =====================
-   CREATE COURSE
-===================== */
 export const createCourseService = async ({
   creatorId,
-  creatorType, // "Instructor" | "School"
+  creatorType, // "Instructor" \ "School"
   title,
   description,
   price,
@@ -93,16 +88,12 @@ export const createCourseService = async ({
   return course;
 };
 
-/* =====================
-   GET ALL COURSES
-===================== */
+  // GET ALL COURSES
 export const getAllCoursesService = async () => {
   return Course.find({ status: "Active" }).sort({ createdAt: -1 });
 };
 
-/* =====================
-   GET COURSE BY ID
-===================== */
+  // GET COURSE BY ID
 export const getCourseByIdService = async (courseId) => {
   if (!isValidObjectId(courseId)) {
     throw new Error("מזהה קורס לא תקין");
@@ -117,9 +108,7 @@ export const getCourseByIdService = async (courseId) => {
   return course;
 };
 
-/* =====================
-   GET COURSES BY CREATOR
-===================== */
+   //GET COURSES BY CREATOR
 export const getCoursesByCreatorService = async ({
   creatorId,
   creatorType,
@@ -138,9 +127,7 @@ export const getCoursesByCreatorService = async ({
   }).sort({ createdAt: -1 });
 };
 
-/* =====================
-   UPDATE COURSE
-===================== */
+  // UPDATE COURSE
 export const updateCourseService = async (
   courseId,
   data,
@@ -159,13 +146,13 @@ export const updateCourseService = async (
     throw new Error("קורס לא נמצא");
   }
 
-  // // 🔐 בדיקת בעלות
-  // if (
-  //   course.createdBy.toString() !== user._id.toString() ||
-  //   course.createdByModel !== user.role
-  // ) {
-  //   throw new Error("אין הרשאה לעדכן קורס זה");
-  // }
+  //  בדיקת בעלות
+  if (
+    course.createdBy.toString() !== user._id.toString() ||
+    course.createdByModel !== user.role
+  ) {
+    throw new Error("אין הרשאה לעדכן קורס זה");
+  }
 
   // שדות שאסור לעדכן
   const forbiddenFields = ["_id", "createdBy", "createdByModel"];
@@ -189,9 +176,8 @@ export const updateCourseService = async (
   return updatedCourse;
 };
 
-/* =====================
-   DELETE COURSE
-===================== */
+   //DELETE COURSE
+
 export const deleteCourseService = async (
   courseId,
   user, // req.user
@@ -205,17 +191,17 @@ export const deleteCourseService = async (
     throw new Error("קורס לא נמצא");
   }
 
-  // // 🔐 בדיקת בעלות
-  // if (
-  //   course.createdBy.toString() !== user._id.toString() ||
-  //   course.createdByModel !== user.role
-  // ) {
-  //   throw new Error("אין הרשאה למחוק קורס זה");
-  // }
+   //  בדיקת בעלות
+  if (
+    course.createdBy.toString() !== user._id.toString() ||
+    course.createdByModel !== user.role
+  ) {
+    throw new Error("אין הרשאה למחוק קורס זה");
+  }
 
   const registrations = await Registration.find({ course: courseId });
   if (registrations.length > 0) {
-    course.status = "Inactive"; // או "cancelled"
+    course.status = "Inactive"; 
     await course.save();
     return { message: "הקורס לא נמחק כי יש הרשמות, הסטטוס הועבר ל'לא פעיל'" };
   }

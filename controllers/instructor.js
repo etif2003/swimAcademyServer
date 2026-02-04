@@ -9,9 +9,7 @@ import {
 
 import { serverResponse } from "../utils/server-response.js";
 
-/* =====================
-   CREATE INSTRUCTOR PROFILE
-===================== */
+   //CREATE INSTRUCTOR PROFILE
 export const createInstructorController = async (req, res) => {
   try {
     const instructor = await createInstructorService(req.body);
@@ -21,9 +19,7 @@ export const createInstructorController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET INSTRUCTOR BY USER
-===================== */
+   //GET INSTRUCTOR BY USER
 export const getInstructorByUserController = async (req, res) => {
   try {
     const instructor = await getInstructorByUserService(req.params.userId);
@@ -33,9 +29,7 @@ export const getInstructorByUserController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET ALL INSTRUCTORS
-===================== */
+  // GET ALL INSTRUCTORS
 export const getAllInstructorsController = async (req, res) => {
   try {
     const instructors = await getAllInstructorsService();
@@ -45,9 +39,7 @@ export const getAllInstructorsController = async (req, res) => {
   }
 };
 
-/* =====================
-   GET INSTRUCTOR BY ID
-===================== */
+   //GET INSTRUCTOR BY ID
 export const getInstructorByIdController = async (req, res) => {
   try {
     const instructor = await getInstructorByIdService(req.params.id);
@@ -57,9 +49,7 @@ export const getInstructorByIdController = async (req, res) => {
   }
 };
 
-/* =====================
-   UPDATE INSTRUCTOR
-===================== */
+   //UPDATE INSTRUCTOR
 export const updateInstructorController = async (req, res) => {
   try {
     const updatedInstructor = await updateInstructorService(
@@ -72,9 +62,7 @@ export const updateInstructorController = async (req, res) => {
   }
 };
 
-/* =====================
-   DELETE INSTRUCTOR
-===================== */
+   //DELETE INSTRUCTOR
 export const deleteInstructorController = async (req, res) => {
   try {
     const result = await deleteInstructorService(req.params.id);

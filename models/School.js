@@ -58,7 +58,7 @@ const schoolSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔍 אינדקסים לחיפוש
+//  אינדקסים לחיפוש
 schoolSchema.index({
   name: 1,
   "location.city": 1,
