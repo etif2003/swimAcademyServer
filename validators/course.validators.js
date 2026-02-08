@@ -3,6 +3,8 @@ import {
   validateRequiredFields,
 } from "./common.validators.js";
 import { MESSAGES } from "../utils/constants/messages.js";
+import { AREAS } from "../utils/constants/areas.js";
+
 
 // =======================
 // Domain enums
@@ -26,6 +28,8 @@ export const validateCreateCoursePayload = (data) => {
     price: data.price,
     category: data.category,
     targetAudience: data.targetAudience,
+    area: data.area, 
+
   });
 
   validateEnum(
@@ -39,6 +43,12 @@ export const validateCreateCoursePayload = (data) => {
     ALLOWED_CATEGORIES,
     MESSAGES.COURSE.INVALID_CATEGORY
   );
+  validateEnum(
+  data.area,
+  AREAS,
+  MESSAGES.COURSE.INVALID_AREA
+    );
+
 
   if (typeof data.price !== "number" || data.price < 0) {
     throw new Error(MESSAGES.COURSE.INVALID_PRICE);
@@ -55,3 +65,12 @@ export const validateCourseCategory = (category) => {
     MESSAGES.COURSE.INVALID_CATEGORY
   );
 };
+
+export const validateCourseArea = (area) => {
+  validateEnum(
+    area,
+    AREAS,
+    MESSAGES.COURSE.INVALID_AREA
+  );
+};
+

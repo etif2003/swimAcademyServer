@@ -41,6 +41,8 @@ export const MESSAGES = {
     ALREADY_EXISTS: "כבר קיים קורס עם שם זה",
     INVALID_CATEGORY: "קטגוריית קורס לא חוקית",
     INVALID_PRICE: "מחיר הקורס אינו תקין",
+    INVALID_AREA: "אזור הקורס אינו חוקי",
+
     NOT_ACTIVE: "לא ניתן להירשם לקורס לא פעיל",
     FULL: "הקורס מלא",
     NO_PERMISSION: "אין הרשאה לבצע פעולה זו על קורס זה",
@@ -65,11 +67,11 @@ export const MESSAGES = {
     INVALID_ID: "מזהה בית ספר לא תקין",
     NOT_FOUND: "בית ספר לא נמצא",
     NAME_REQUIRED: "שם בית הספר הוא שדה חובה",
+    INVALID_AREA: "אזור בית הספר אינו חוקי",
     ALREADY_EXISTS: "כבר קיים בית ספר למשתמש זה",
     INVALID_PHONE: "מספר טלפון ליצירת קשר אינו תקין",
     DELETED_SUCCESS: "בית הספר נמחק בהצלחה",
-      USER_NOT_SCHOOL: "המשתמש אינו מוגדר כבעל בית ספר",
-
+    USER_NOT_SCHOOL: "המשתמש אינו מוגדר כבעל בית ספר",
   },
 
   INSTRUCTOR: {
@@ -86,7 +88,6 @@ export const MESSAGES = {
     NOT_FOUND: "שיוך לא נמצא",
     ALREADY_EXISTS: "המדריך כבר משויך לבית הספר",
     REMOVED_SUCCESS: "שיוך המדריך לבית הספר בוטל בהצלחה",
-      INVALID_IDS: "מזהה מדריך או בית ספר לא תקין",
-
+    INVALID_IDS: "מזהה מדריך או בית ספר לא תקין",
   },
 };

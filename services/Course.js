@@ -7,13 +7,15 @@ import { MESSAGES } from "../utils/constants/messages.js";
 import {
   validateObjectId,
   validateNonEmptyUpdate,
+  
 } from "../validators/common.validators.js";
 
 import {
   validateCreateCoursePayload,
   validateCourseCategory,
-} from "../validators/course.validators.js";
+    validateCourseArea,
 
+} from "../validators/course.validators.js";
 
 // =======================
 // CREATE COURSE
@@ -23,10 +25,7 @@ export const createCourseService = async (data) => {
   validateCreateCoursePayload(data);
 
   // technical validation
-  validateObjectId(
-    data.creatorId,
-    MESSAGES.COURSE.INVALID_CREATOR_ID
-  );
+  validateObjectId(data.creatorId, MESSAGES.COURSE.INVALID_CREATOR_ID);
 
   const {
     creatorId,
@@ -38,6 +37,7 @@ export const createCourseService = async (data) => {
     targetAudience,
     level,
     image,
+    area,
   } = data;
 
   // check creator existence
@@ -74,20 +74,18 @@ export const createCourseService = async (data) => {
     targetAudience,
     level,
     image,
+    area,
     createdBy: creatorId,
     createdByModel: creatorType,
   });
 };
 
-
 // =======================
 // GET ALL COURSES
 // =======================
 export const getAllCoursesService = async () => {
-  return Course.find({ status: "Active" })
-    .sort({ createdAt: -1 });
+  return Course.find({ status: "Active" }).sort({ createdAt: -1 });
 };
-
 
 // =======================
 // GET COURSE BY ID
@@ -104,7 +102,6 @@ export const getCourseByIdService = async (courseId) => {
   return course;
 };
 
-
 // =======================
 // GET COURSES BY CREATOR
 // =======================
@@ -112,10 +109,7 @@ export const getCoursesByCreatorService = async ({
   creatorId,
   creatorType,
 }) => {
-  validateObjectId(
-    creatorId,
-    MESSAGES.COURSE.INVALID_CREATOR_ID
-  );
+  validateObjectId(creatorId, MESSAGES.COURSE.INVALID_CREATOR_ID);
 
   return Course.find({
     createdBy: creatorId,
@@ -123,14 +117,13 @@ export const getCoursesByCreatorService = async ({
   }).sort({ createdAt: -1 });
 };
 
-
 // =======================
 // UPDATE COURSE
 // =======================
 export const updateCourseService = async (
   courseId,
   data,
-  user // req.user
+  user, // req.user
 ) => {
   validateObjectId(courseId, MESSAGES.COURSE.INVALID_ID);
   validateNonEmptyUpdate(data);
@@ -157,6 +150,9 @@ export const updateCourseService = async (
     validateCourseCategory(data.category);
   }
 
+  if (data.area !== undefined) {
+  validateCourseArea(data.area);
+}
   if (data.price !== undefined) {
     if (typeof data.price !== "number" || data.price < 0) {
       throw new Error(MESSAGES.COURSE.INVALID_PRICE);
@@ -169,13 +165,12 @@ export const updateCourseService = async (
   });
 };
 
-
 // =======================
 // DELETE COURSE
 // =======================
 export const deleteCourseService = async (
   courseId,
-  user // req.user
+  user, // req.user
 ) => {
   validateObjectId(courseId, MESSAGES.COURSE.INVALID_ID);
 
@@ -208,5 +203,3 @@ export const deleteCourseService = async (
     message: MESSAGES.COURSE.DELETED_SUCCESS,
   };
 };
-
-

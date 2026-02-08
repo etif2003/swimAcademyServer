@@ -11,6 +11,7 @@ import {
 
 import {
   validateCreateSchoolPayload,
+  validateSchoolArea,
 } from "../validators/school.validators.js";
 
 
@@ -24,6 +25,7 @@ export const createSchoolService = async (data) => {
   const {
     ownerId,
     name,
+    area,
     location,
     description,
     logo,
@@ -54,6 +56,7 @@ export const createSchoolService = async (data) => {
   return School.create({
     owner: ownerId,
     name,
+    area,
     location: location || {},
     description,
     logo,
@@ -116,6 +119,10 @@ export const updateSchoolService = async (schoolId, data) => {
   if (data.contactPhone) {
     validatePhone(data.contactPhone);
   }
+  if (data.area !== undefined) {
+  validateSchoolArea(data.area);
+}
+
 
   const school = await School.findByIdAndUpdate(
     schoolId,

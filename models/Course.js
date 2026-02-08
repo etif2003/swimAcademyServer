@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { AREAS } from "../utils/constants/areas.js";
+
+
 
 const courseSchema = new mongoose.Schema(
   {
@@ -61,7 +64,6 @@ const courseSchema = new mongoose.Schema(
       default: "Draft",
     },
 
-    
     durationWeeks: {
       type: Number,
       min: 1,
@@ -70,6 +72,12 @@ const courseSchema = new mongoose.Schema(
     sessionsCount: {
       type: Number,
       min: 1,
+    },
+
+    area: {
+      type: String,
+      enum: AREAS,
+      required: true,
     },
 
     location: {

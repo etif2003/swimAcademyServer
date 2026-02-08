@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { AREAS } from "../utils/constants/areas.js";
 
 const schoolSchema = new mongoose.Schema(
   {
@@ -17,6 +18,11 @@ const schoolSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
+    },
+    area: {
+      type: String,
+      enum: AREAS,
+      required: true,
     },
 
     location: {
@@ -55,7 +61,7 @@ const schoolSchema = new mongoose.Schema(
       default: "Draft",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 //  אינדקסים לחיפוש
