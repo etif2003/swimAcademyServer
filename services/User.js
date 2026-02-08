@@ -57,7 +57,7 @@ export const registerUserService = async (data) => {
     fullName: user.fullName,
     email: user.email,
     role: user.role,
-    token: generateToken(user._id),
+    token: generateToken(user),
   };
 };
 
