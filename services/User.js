@@ -87,7 +87,7 @@ export const loginUserService = async ({ email, password }) => {
     fullName: user.fullName,
     email: user.email,
     role: user.role,
-    token: generateToken(user._id),
+    token: generateToken(user),
   };
 };
 
