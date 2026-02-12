@@ -7,14 +7,12 @@ import { MESSAGES } from "../utils/constants/messages.js";
 import {
   validateObjectId,
   validateNonEmptyUpdate,
-  
 } from "../validators/common.validators.js";
 
 import {
   validateCreateCoursePayload,
   validateCourseCategory,
-    validateCourseArea,
-
+  validateCourseArea,
 } from "../validators/course.validators.js";
 
 // =======================
@@ -93,8 +91,11 @@ export const getAllCoursesService = async () => {
 export const getCourseByIdService = async (courseId) => {
   validateObjectId(courseId, MESSAGES.COURSE.INVALID_ID);
 
-  const course = await Course.findById(courseId);
-
+  const course = await Course.findById(courseId).populate({
+    path: "createdBy",
+    select: "name logo fullName image",
+  });
+  
   if (!course) {
     throw new Error(MESSAGES.COURSE.NOT_FOUND);
   }
@@ -151,8 +152,8 @@ export const updateCourseService = async (
   }
 
   if (data.area !== undefined) {
-  validateCourseArea(data.area);
-}
+    validateCourseArea(data.area);
+  }
   if (data.price !== undefined) {
     if (typeof data.price !== "number" || data.price < 0) {
       throw new Error(MESSAGES.COURSE.INVALID_PRICE);

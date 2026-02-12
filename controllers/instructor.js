@@ -25,9 +25,13 @@ export const getInstructorByUserController = async (req, res) => {
     const instructor = await getInstructorByUserService(req.params.userId);
     serverResponse(res, 200, instructor);
   } catch (err) {
-    serverResponse(res, 404, { message: err.message });
+    if (err.message === "פרופיל מדריך לא נמצא") {
+      return serverResponse(res, 200, null); // 👈 חשוב
+    }
+    serverResponse(res, 400, { message: err.message });
   }
 };
+
 
   // GET ALL INSTRUCTORS
 export const getAllInstructorsController = async (req, res) => {
