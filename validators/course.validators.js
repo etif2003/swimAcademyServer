@@ -11,6 +11,7 @@ import { AREAS } from "../utils/constants/areas.js";
 // =======================
 export const ALLOWED_CREATORS = ["Instructor", "School"];
 export const ALLOWED_CATEGORIES = [
+  "All",
   "Learning",
   "Training",
   "Therapy",

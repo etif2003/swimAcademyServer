@@ -1,7 +1,9 @@
+
 export const AREAS = [
-  "צפון",
-  "מרכז",
-  "דרום",
-  "שרון",
-  "ירושלים",
+  "North",
+  "Center",
+  "South",
+  "Sharon",
+  "Jerusalem",
 ];
+

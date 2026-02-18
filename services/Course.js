@@ -26,32 +26,44 @@ export const createCourseService = async (data) => {
   validateObjectId(data.creatorId, MESSAGES.COURSE.INVALID_CREATOR_ID);
 
   const {
-    creatorId,
-    creatorType,
-    title,
-    description,
-    price,
-    category,
-    targetAudience,
-    level,
-    image,
-    area,
-  } = data;
+  creatorId,
+  creatorType,
+  title,
+  description,
+  price,
+  category,
+  targetAudience,
+  level,
+  image,
+  area,
+  maxParticipants,
+  durationWeeks,
+  sessionsCount,
+  location,
+} = data;
+
 
   // check creator existence
-  if (creatorType === "Instructor") {
-    const exists = await Instructor.exists({ _id: creatorId });
-    if (!exists) {
-      throw new Error(MESSAGES.INSTRUCTOR.NOT_FOUND);
-    }
+if (creatorType === "Instructor") {
+  const instructor = await Instructor.findOne({ user: creatorId });
+
+  if (!instructor) {
+    throw new Error(MESSAGES.INSTRUCTOR.NOT_FOUND);
   }
 
-  if (creatorType === "School") {
-    const exists = await School.exists({ _id: creatorId });
-    if (!exists) {
-      throw new Error(MESSAGES.SCHOOL.NOT_FOUND);
-    }
+  data.creatorId = instructor._id;
+}
+
+if (creatorType === "School") {
+  const school = await School.findOne({ owner: creatorId });
+
+  if (!school) {
+    throw new Error(MESSAGES.SCHOOL.NOT_FOUND);
   }
+
+  data.creatorId = school._id;
+}
+
 
   // prevent duplicate course per creator
   const courseExists = await Course.exists({
@@ -73,8 +85,12 @@ export const createCourseService = async (data) => {
     level,
     image,
     area,
-    createdBy: creatorId,
-    createdByModel: creatorType,
+        maxParticipants,
+    durationWeeks,
+    sessionsCount,
+    location,
+    createdBy: data.creatorId,
+createdByModel: creatorType,
   });
 };
 

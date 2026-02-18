@@ -7,12 +7,13 @@ import {
   updateCourseController,
   deleteCourseController,
 } from "../controllers/Course.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 
 // יצירת קורס 
-router.post("/", createCourseController);
+router.post("/",authMiddleware, createCourseController);
 
 // כל הקורסים
 router.get("/", getAllCoursesController);
@@ -28,7 +29,7 @@ router.get(
 
 
 // עדכון קורס לפי ID
-router.put("/:id", updateCourseController);
+router.put("/:id", authMiddleware,updateCourseController);
 
 
 // מחיקת קורס לפי ID
