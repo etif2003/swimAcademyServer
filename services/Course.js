@@ -16,137 +16,90 @@ import {
 } from "../validators/course.validators.js";
 
 // =======================
-// CREATE COURSE
+// HELPER
+// =======================
+const resolveCreatorIdFromUser = async (user) => {
+  if (user.role === "Instructor") {
+    const instructor = await Instructor.findOne({ user: user._id });
+    if (!instructor) throw new Error("פרופיל מדריך לא נמצא");
+    return instructor._id;
+  }
+
+  if (user.role === "School") {
+    const school = await School.findOne({ owner: user._id });
+    if (!school) throw new Error("בית ספר לא נמצא");
+    return school._id;
+  }
+
+  throw new Error("אין הרשאה");
+};
+
+// =======================
+// CREATE
 // =======================
 export const createCourseService = async (data) => {
-  // payload-level validation
   validateCreateCoursePayload(data);
-
-  // technical validation
   validateObjectId(data.creatorId, MESSAGES.COURSE.INVALID_CREATOR_ID);
 
-  const {
-  creatorId,
-  creatorType,
-  title,
-  description,
-  price,
-  category,
-  targetAudience,
-  level,
-  image,
-  area,
-  maxParticipants,
-  durationWeeks,
-  sessionsCount,
-  location,
-} = data;
-
-
-  // check creator existence
-if (creatorType === "Instructor") {
-  const instructor = await Instructor.findOne({ user: creatorId });
-
-  if (!instructor) {
-    throw new Error(MESSAGES.INSTRUCTOR.NOT_FOUND);
+  if (data.creatorType === "Instructor") {
+    const instructor = await Instructor.findById(data.creatorId);
+    if (!instructor) throw new Error(MESSAGES.INSTRUCTOR.NOT_FOUND);
   }
 
-  data.creatorId = instructor._id;
-}
-
-if (creatorType === "School") {
-  const school = await School.findOne({ owner: creatorId });
-
-  if (!school) {
-    throw new Error(MESSAGES.SCHOOL.NOT_FOUND);
+  if (data.creatorType === "School") {
+    const school = await School.findById(data.creatorId);
+    if (!school) throw new Error(MESSAGES.SCHOOL.NOT_FOUND);
   }
 
-  data.creatorId = school._id;
-}
-
-
-  // prevent duplicate course per creator
-  const courseExists = await Course.exists({
-    title,
-    createdBy: creatorId,
-    createdByModel: creatorType,
+  const exists = await Course.exists({
+    title: data.title,
+    createdBy: data.creatorId,
+    createdByModel: data.creatorType,
   });
 
-  if (courseExists) {
-    throw new Error(MESSAGES.COURSE.ALREADY_EXISTS);
-  }
+  if (exists) throw new Error(MESSAGES.COURSE.ALREADY_EXISTS);
 
   return Course.create({
-    title,
-    description,
-    price,
-    category,
-    targetAudience,
-    level,
-    image,
-    area,
-        maxParticipants,
-    durationWeeks,
-    sessionsCount,
-    location,
+    ...data,
     createdBy: data.creatorId,
-createdByModel: creatorType,
+    createdByModel: data.creatorType,
   });
 };
 
 // =======================
-// GET ALL COURSES
+// GET ALL
 // =======================
 export const getAllCoursesService = async () => {
   return Course.find({ status: "Active" }).sort({ createdAt: -1 });
 };
 
 // =======================
-// GET COURSE BY ID
+// GET BY ID
 // =======================
-export const getCourseByIdService = async (courseId) => {
-  validateObjectId(courseId, MESSAGES.COURSE.INVALID_ID);
+export const getCourseByIdService = async (id) => {
+  validateObjectId(id, MESSAGES.COURSE.INVALID_ID);
 
-  const course = await Course.findById(courseId).populate({
-    path: "createdBy",
-    select: "name logo fullName image",
-  });
-  
-  if (!course) {
-    throw new Error(MESSAGES.COURSE.NOT_FOUND);
-  }
+  const course = await Course.findById(id).populate("createdBy");
+
+  if (!course) throw new Error(MESSAGES.COURSE.NOT_FOUND);
 
   return course;
 };
 
-
-
+// =======================
+// GET MY COURSES
+// =======================
 export const getMyCoursesService = async (user) => {
-  let creatorId;
-
-  if (user.role === "Instructor") {
-    const instructor = await Instructor.findOne({ user: user._id });
-    if (!instructor) throw new Error("פרופיל מדריך לא נמצא");
-
-    creatorId = instructor._id;
-  }
-
-  if (user.role === "School") {
-    const school = await School.findOne({ owner: user._id });
-    if (!school) throw new Error("בית ספר לא נמצא");
-
-    creatorId = school._id;
-  }
+  const creatorId = await resolveCreatorIdFromUser(user);
 
   return Course.find({
     createdBy: creatorId,
     createdByModel: user.role,
-  });
+  }).sort({ createdAt: -1 });
 };
 
-
 // =======================
-// GET COURSES BY CREATOR
+// GET BY CREATOR
 // =======================
 export const getCoursesByCreatorService = async ({
   creatorId,
@@ -161,88 +114,62 @@ export const getCoursesByCreatorService = async ({
 };
 
 // =======================
-// UPDATE COURSE
+// UPDATE
 // =======================
-export const updateCourseService = async (
-  courseId,
-  data,
-  user, // req.user
-) => {
-  validateObjectId(courseId, MESSAGES.COURSE.INVALID_ID);
+export const updateCourseService = async (id, data, user) => {
+  validateObjectId(id, MESSAGES.COURSE.INVALID_ID);
   validateNonEmptyUpdate(data);
 
-  const course = await Course.findById(courseId);
-  if (!course) {
-    throw new Error(MESSAGES.COURSE.NOT_FOUND);
-  }
+  const course = await Course.findById(id);
+  if (!course) throw new Error(MESSAGES.COURSE.NOT_FOUND);
 
-  // ownership check
+  const creatorId = await resolveCreatorIdFromUser(user);
+
   if (
-    course.createdBy.toString() !== user._id.toString() ||
+    course.createdBy.toString() !== creatorId.toString() ||
     course.createdByModel !== user.role
   ) {
     throw new Error(MESSAGES.COURSE.NO_PERMISSION);
   }
 
-  // forbidden fields
-  const forbiddenFields = ["_id", "createdBy", "createdByModel"];
-  forbiddenFields.forEach((field) => delete data[field]);
+  const forbidden = ["_id", "createdBy", "createdByModel"];
+  forbidden.forEach((f) => delete data[f]);
 
-  // domain-level validations
-  if (data.category) {
-    validateCourseCategory(data.category);
-  }
+  if (data.category) validateCourseCategory(data.category);
+  if (data.area !== undefined) validateCourseArea(data.area);
 
-  if (data.area !== undefined) {
-    validateCourseArea(data.area);
-  }
-  if (data.price !== undefined) {
-    if (typeof data.price !== "number" || data.price < 0) {
-      throw new Error(MESSAGES.COURSE.INVALID_PRICE);
-    }
-  }
-
-  return Course.findByIdAndUpdate(courseId, data, {
+  return Course.findByIdAndUpdate(id, data, {
     new: true,
     runValidators: true,
   });
 };
 
 // =======================
-// DELETE COURSE
+// DELETE
 // =======================
-export const deleteCourseService = async (
-  courseId,
-  user, // req.user
-) => {
-  validateObjectId(courseId, MESSAGES.COURSE.INVALID_ID);
+export const deleteCourseService = async (id, user) => {
+  validateObjectId(id, MESSAGES.COURSE.INVALID_ID);
 
-  const course = await Course.findById(courseId);
-  if (!course) {
-    throw new Error(MESSAGES.COURSE.NOT_FOUND);
-  }
+  const course = await Course.findById(id);
+  if (!course) throw new Error(MESSAGES.COURSE.NOT_FOUND);
 
-  // ownership check
+  const creatorId = await resolveCreatorIdFromUser(user);
+
   if (
-    course.createdBy.toString() !== user._id.toString() ||
+    course.createdBy.toString() !== creatorId.toString() ||
     course.createdByModel !== user.role
   ) {
     throw new Error(MESSAGES.COURSE.NO_PERMISSION);
   }
 
-  const registrations = await Registration.find({ course: courseId });
+  const registrations = await Registration.find({ course: id });
+
   if (registrations.length > 0) {
     course.status = "Inactive";
     await course.save();
-
-    return {
-      message: MESSAGES.COURSE.HAS_REGISTRATIONS,
-    };
+    return { message: MESSAGES.COURSE.HAS_REGISTRATIONS };
   }
 
   await course.deleteOne();
-
-  return {
-    message: MESSAGES.COURSE.DELETED_SUCCESS,
-  };
+  return { message: MESSAGES.COURSE.DELETED_SUCCESS };
 };

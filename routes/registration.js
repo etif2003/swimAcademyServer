@@ -6,6 +6,8 @@ import {
   updateRegistrationStatusController,
   deleteRegistrationController,
 } from "../controllers/registration.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+
 
 const router = express.Router();
 
@@ -22,7 +24,7 @@ router.get(
 
 // כל ההרשמות לקורס
 router.get(
-  "/by-course/:courseId",
+  "/by-course/:courseId",authMiddleware,
   getRegistrationsByCourseController
 );
 
