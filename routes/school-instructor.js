@@ -6,11 +6,13 @@ import {
   updateSchoolInstructorController,
   deleteSchoolInstructorController,
 } from "../controllers/school-instructor.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+
 
 const router = express.Router();
 
 // שיוך מדריך לבית ספר
-router.post("/", createSchoolInstructorController);
+router.post("/",authMiddleware, createSchoolInstructorController);
 
 
 // כל המדריכים של בית ספר
@@ -25,6 +27,6 @@ router.put("/:id", updateSchoolInstructorController);
 
 
 // ביטול שיוך 
-router.delete("/:id", deleteSchoolInstructorController);
+router.delete("/:id",authMiddleware, deleteSchoolInstructorController);
 
 export default router;

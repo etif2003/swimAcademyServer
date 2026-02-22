@@ -13,7 +13,7 @@ const router = express.Router();
 
 
 // הרשמה לקורס 
-router.post("/", createRegistrationController);
+router.post("/",authMiddleware, createRegistrationController);
 
 
 // כל ההרשמות של משתמש

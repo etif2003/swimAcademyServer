@@ -11,7 +11,14 @@ import { serverResponse } from "../utils/server-response.js";
    //CREATE REGISTRATION
 export const createRegistrationController = async (req, res) => {
   try {
-    const registration = await createRegistrationService(req.body);
+    const registration = await createRegistrationService({
+      userId: req.user.id, 
+      courseId: req.body.courseId,
+    });
+
+
+
+
     serverResponse(res, 201, registration);
   } catch (err) {
     serverResponse(res, 400, { message: err.message });

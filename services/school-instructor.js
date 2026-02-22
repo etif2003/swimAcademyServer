@@ -149,16 +149,18 @@ export const deleteSchoolInstructorService = async (id) => {
   );
 
   const record = await SchoolInstructor.findById(id);
+
   if (!record) {
     throw new Error(
       MESSAGES.SCHOOL_INSTRUCTOR.NOT_FOUND
     );
   }
 
-  record.status = "Inactive";
-  await record.save();
+  await record.deleteOne(); // מחיקה מלאה
 
   return {
-    message: MESSAGES.SCHOOL_INSTRUCTOR.REMOVED_SUCCESS,
+    message:
+      MESSAGES.SCHOOL_INSTRUCTOR.REMOVED_SUCCESS,
   };
 };
+
