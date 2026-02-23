@@ -82,7 +82,6 @@ export const getInstructorsBySchoolService = async (schoolId) => {
 
   return SchoolInstructor.find({
     school: schoolId,
-    status: "Active",
   })
     .populate("instructor")
     .sort({ createdAt: -1 });
@@ -92,20 +91,49 @@ export const getInstructorsBySchoolService = async (schoolId) => {
 // =======================
 // GET SCHOOLS BY INSTRUCTOR
 // =======================
-export const getSchoolsByInstructorService = async (instructorId) => {
-  validateObjectId(
-    instructorId,
-    MESSAGES.INSTRUCTOR.INVALID_ID
-  );
+export const getSchoolsByInstructorService = async (userId) => {
+  validateObjectId(userId, MESSAGES.INSTRUCTOR.INVALID_ID);
+
+  const instructor = await Instructor.findOne({ user: userId });
+
+  if (!instructor) {
+    throw new Error(MESSAGES.INSTRUCTOR.NOT_FOUND);
+  }
 
   return SchoolInstructor.find({
-    instructor: instructorId,
+    instructor: instructor._id,
     status: "Active",
   })
     .populate("school")
     .sort({ createdAt: -1 });
 };
 
+
+// =======================
+// GET PENDING REQUESTS BY INSTRUCTOR
+// =======================
+export const getPendingRequestsByInstructorService = async (
+  userId
+) => {
+  validateObjectId(
+    userId,
+    MESSAGES.INSTRUCTOR.INVALID_ID
+  );
+
+  // למצוא את פרופיל המדריך לפי user
+  const instructor = await Instructor.findOne({ user: userId });
+
+  if (!instructor) {
+    throw new Error(MESSAGES.INSTRUCTOR.NOT_FOUND);
+  }
+
+  return SchoolInstructor.find({
+    instructor: instructor._id,
+    status: { $ne: "Active" },
+  })
+    .populate("school")
+    .sort({ createdAt: -1 });
+};
 
 // =======================
 // UPDATE SCHOOL INSTRUCTOR

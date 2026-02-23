@@ -4,6 +4,7 @@ import {
   getSchoolsByInstructorService,
   updateSchoolInstructorService,
   deleteSchoolInstructorService,
+  getPendingRequestsByInstructorService,
 } from "../services/school-instructor.js";
 
 import { serverResponse } from "../utils/server-response.js";
@@ -34,14 +35,28 @@ export const getInstructorsBySchoolController = async (req, res) => {
 export const getSchoolsByInstructorController = async (req, res) => {
   try {
     const result = await getSchoolsByInstructorService(
-      req.params.instructorId
+      req.user._id 
     );
+
     serverResponse(res, 200, result);
   } catch (err) {
     serverResponse(res, 404, { message: err.message });
   }
 };
 
+// GET PENDING REQUESTS BY INSTRUCTOR
+export const getPendingRequestsByInstructorController = async (req, res) => {
+  try {
+    const result =
+      await getPendingRequestsByInstructorService(
+        req.user._id 
+      );
+
+    serverResponse(res, 200, result);
+  } catch (err) {
+    serverResponse(res, 404, { message: err.message });
+  }
+};
 
    //UPDATE SCHOOL INSTRUCTOR
 export const updateSchoolInstructorController = async (req, res) => {
