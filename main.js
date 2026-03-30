@@ -3,6 +3,8 @@ import cors from "cors";
 import { connectDB } from "./db/db.js";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 import courseRoutes from "./routes/course.js";
 import userRoutes from "./routes/user.js";
@@ -12,8 +14,8 @@ import registrationRoutes from "./routes/registration.js";
 import schoolInstructorRoutes from "./routes/school-instructor.js";
 import uploadRoutes from "./routes/upload.js";
 
-
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const port = process.env.PORT || 4000;
 const mongoURI = process.env.MONGO_URI || "";
@@ -21,6 +23,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(express.static("client/dist"));
 
 // ROUTES
 app.use("/api/courses", courseRoutes);
@@ -32,6 +35,10 @@ app.use("/api/school-instructors", schoolInstructorRoutes);
 
 app.use("/api/upload", uploadRoutes);
 
+app.get(/.*/, (req, res) => {
+  console.log(__dirname);
+  res.sendFile(__dirname + "/client/dist/index.html");
+});
 
 // -------------------- START SERVER -------------------- //
 const startServer = async () => {
