@@ -52,10 +52,4 @@ const startServer = async () => {
   });
 };
 
-console.log("*");
-
-console.log(process.env.MONGO_URI);
-
-console.log("*");
-
 startServer();
