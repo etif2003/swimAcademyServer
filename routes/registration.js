@@ -31,7 +31,7 @@ router.get(
 
 // עדכון סטטוס הרשמה
 router.put(
-  "/:id/status",
+  "/:id/status",authMiddleware,
   updateRegistrationStatusController
 );
 
